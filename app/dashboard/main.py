@@ -1,4 +1,5 @@
 import streamlit as st
+import cv2
 
 # Page Config
 st.set_page_config(
@@ -20,10 +21,26 @@ col1, col2 = st.columns([2, 1])
 
 # Left Column
 with col1:
+
     st.subheader("📷 Live Webcam Feed")
 
-    # Webcam placeholder
-    st.info("Webcam feed will appear here")
+    run = st.checkbox("Start Webcam")
+
+    FRAME_WINDOW = st.image([])
+
+    camera = cv2.VideoCapture(0)
+
+    while run:
+
+        ret, frame = camera.read()
+
+        if not ret:
+            st.error("Failed to access webcam")
+            break
+
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        FRAME_WINDOW.image(frame)
 
 # Right Column
 with col2:
