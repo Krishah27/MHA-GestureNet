@@ -1,0 +1,44 @@
+MHA-GestureNet Healthcare Dataset Report
+
+=======================================
+
+Original Dataset:
+- JSON landmark gesture dataset
+- Temporal hand landmark sequences
+- 21 hand landmarks
+- 2D coordinates (x, y)
+
+Original Dataset Size:
+- Samples: 504,955
+- Classes: 19
+
+Healthcare Filtered Classes:
+1. call
+2. dislike
+3. fist
+4. like
+5. mute
+6. ok
+7. palm
+8. peace
+9. stop
+
+Final Healthcare Dataset:
+- Samples: 227,049
+- Sequence Length: 10
+- Feature Dimension: 42
+- Tensor Shape: (227049, 10, 42)
+
+Preprocessing Steps:
+1. JSON parsing
+2. Landmark extraction
+3. Invalid frame removal
+4. Temporal sequence generation
+5. Sequence padding
+6. Healthcare semantic filtering
+7. Label encoding
+
+Generated Files:
+- X_healthcare.npy
+- y_healthcare.npy
+- label_encoder.pkl
