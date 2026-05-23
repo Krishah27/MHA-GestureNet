@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 venv/
 __pycache__/
 *.pyc
@@ -5,3 +6,21 @@ __pycache__/
 logs/
 .vscode/
 .idea/
+=======
+# Dataset
+Dataset/
+
+# Numpy files
+*.npy
+
+# Weights
+*.keras
+*.h5
+
+# Outputs
+outputs/
+
+# Virtual env
+venv/
+.venv/
+>>>>>>> 8b793ca (Added preprocessing and BiLSTM training pipeline)
