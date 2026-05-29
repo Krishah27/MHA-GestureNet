@@ -642,7 +642,7 @@ with col1:
 
     run = st.checkbox("▶  Activate gesture recognition", key="run_cam")
 
-    FRAME_WINDOW = st.image([], use_container_width=True)
+    FRAME_WINDOW = st.image([])
 
     if not run:
         st.markdown("""
