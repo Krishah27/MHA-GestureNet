@@ -755,119 +755,124 @@ if run:
                     confidence = np.max(prediction)
                     predicted_label = label_encoder.inverse_transform([predicted_class])[0]
 
-                    if len(prediction_history) < 20:
-                        prediction_history.append(predicted_label)
 
-        # FPS
-        current_time = time.time()
-        fps = 1 / (current_time - prev_time + 1e-9)
-        prev_time = current_time
+# ==========================================
+# THEME
+# ==========================================
 
-        # ── Camera frame ──
-        FRAME_WINDOW.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), use_container_width=True)
+dark_mode = st.sidebar.toggle(
+    "🌙 Dark Mode",
+    value=False
+)
 
-        # ── Gesture card ──
-        with gesture_ph.container():
-            st.markdown(f"""
-            <div class="metric-card blue">
-                <div class="metric-label">Detected Gesture</div>
-                <div class="metric-value blue">{predicted_label.upper()}</div>
-                <div class="metric-sub">Latest recognized gesture</div>
-            </div>
-            """, unsafe_allow_html=True)
+bg = "#0f172a" if dark_mode else "#f5f7fb"
+card = "#111827" if dark_mode else "#ffffff"
+text = "#ffffff" if dark_mode else "#111111"
+subtext = "#cbd5e1" if dark_mode else "#555555"
 
-        # ── Confidence card ──
-        conf_color = "teal" if confidence >= 0.75 else "amber" if confidence >= 0.5 else "red"
-        with confidence_ph.container():
-            st.markdown(f"""
-            <div class="metric-card {conf_color}" style="margin-top:12px">
-                <div class="metric-label">Confidence Score</div>
-                <div class="metric-value {conf_color}">{confidence*100:.2f}%</div>
-                <div class="metric-sub">Model prediction certainty</div>
-            </div>
-            """, unsafe_allow_html=True)
+st.markdown(f"""
+<style>
 
-        # ── Emergency alert ──
-        if predicted_label == "call":
-            alert_class = "critical"
-            alert_icon  = "🔴"
-            alert_title = "NURSE CALL DETECTED"
-            alert_desc  = "Patient is requesting immediate assistance"
-        elif predicted_label == "stop":
-            alert_class = "critical"
-            alert_icon  = "🛑"
-            alert_title = "EMERGENCY STOP DETECTED"
-            alert_desc  = "Patient has signalled an emergency stop"
-        elif predicted_label == "mute":
-            alert_class = "warning"
-            alert_icon  = "🟡"
-            alert_title = "PATIENT CANNOT SPEAK"
-            alert_desc  = "Non-verbal alert — attention required"
-        else:
-            alert_class = "normal"
-            alert_icon  = "✅"
-            alert_title = "ALL CLEAR"
-            alert_desc  = "No emergency gestures detected"
+.stApp {{
+    background-color: {bg};
+    color: {text};
+}}
 
-        with emergency_ph.container():
-            st.markdown(f"""
-            <div class="section-label" style="margin-top:20px">Emergency Status</div>
-            <div class="alert-card {alert_class}">
-                <div class="alert-icon">{alert_icon}</div>
-                <div class="alert-text-wrap">
-                    <div class="alert-title">{alert_title}</div>
-                    <div class="alert-desc">{alert_desc}</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+.main-title {{
+    font-size: 52px;
+    font-weight: 800;
+    color: {text};
+}}
 
-        # ── FPS card ──
-        fps_color = "teal" if fps >= 20 else "amber" if fps >= 10 else "red"
-        with fps_ph.container():
-            st.markdown(f"""
-            <div class="metric-card {fps_color}" style="margin-top:12px">
-                <div class="metric-label">Processing Speed</div>
-                <div class="metric-value {fps_color}">{fps:.1f} FPS</div>
-                <div class="metric-sub">Real-time frame throughput</div>
-            </div>
-            """, unsafe_allow_html=True)
+.subtitle {{
+    color: {subtext};
+    font-size: 20px;
+}}
 
-    camera.release()
+.card {{
+    background: {card};
+    padding: 24px;
+    border-radius: 22px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}}
 
-# =========================================================
-# PREDICTION HISTORY SECTION
-# =========================================================
+.metric {{
+    font-size: 22px;
+    font-weight: 700;
+    color: {text};
+}}
 
-st.markdown("---")
-st.markdown('<div class="section-label">Prediction History</div>', unsafe_allow_html=True)
+.small {{
+    color: {subtext};
+}}
 
-if prediction_history:
-    tag_map = {
-        "call": ("alert", "CRITICAL"),
-        "stop": ("alert", "CRITICAL"),
-        "mute": ("warn",  "WARNING"),
-    }
+</style>
+""", unsafe_allow_html=True)
 
-    history_rows = ""
-    for i, item in enumerate(reversed(prediction_history)):
-        tag_cls, tag_label = tag_map.get(item, ("", "NORMAL"))
-        idx = len(prediction_history) - i
-        history_rows += f"""
-        <div class="history-row">
-            <div style="display:flex;align-items:center;gap:10px">
-                <span style="font-family:var(--mono);font-size:0.6rem;color:var(--text-3);min-width:24px">#{idx:02d}</span>
-                <span class="history-gesture">{item.upper()}</span>
-            </div>
-            <span class="history-tag {tag_cls}">{tag_label}</span>
-        </div>
-        """
+# ==========================================
+# HEADER
+# ==========================================
 
-    st.markdown(f'<div class="history-wrap">{history_rows}</div>', unsafe_allow_html=True)
-else:
-    st.markdown("""
-    <div class="history-wrap" style="display:flex;align-items:center;justify-content:center;min-height:80px">
-        <span style="font-family:var(--mono);font-size:0.72rem;color:var(--text-3);letter-spacing:.06em">
-            NO PREDICTIONS YET — ACTIVATE CAMERA TO BEGIN
-        </span>
+st.markdown("""
+<div class='card'>
+<h1 class='main-title'>🏥 MHA-GestureNet</h1>
+<p class='subtitle'>
+AI Powered Healthcare Gesture Recognition & Emergency Alert System
+</p>
+</div>
+""", unsafe_allow_html=True)
+
+st.write("")
+
+# ==========================================
+# LAYOUT
+# ==========================================
+
+col1, col2 = st.columns([3,1])
+
+with col1:
+
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+
+    run = st.button(
+        "▶ Start AI Monitoring"
+    )
+
+    FRAME_WINDOW = st.image([])
+
+    if run:
+
+        for frame in generate_frames():
+
+            frame = cv2.cvtColor(
+                frame,
+                cv2.COLOR_BGR2RGB
+            )
+
+            FRAME_WINDOW.image(frame)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+with col2:
+
+    st.markdown(f"""
+    <div class='card'>
+    <h2 style='color:{text};'>🚨 Active Gestures</h2>
+
+    <p class='metric'>📞 call</p>
+    <p class='small'>Nurse Call</p>
+
+    <p class='metric'>✋ stop</p>
+    <p class='small'>Emergency Stop</p>
+
+    <p class='metric'>🖐 palm</p>
+    <p class='small'>Attention Required</p>
+
+    <p class='metric'>✊ fist</p>
+    <p class='small'>Pain Detection</p>
+
+    <p class='metric'>👍 like</p>
+    <p class='small'>Patient Stable</p>
+
     </div>
     """, unsafe_allow_html=True)
