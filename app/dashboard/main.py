@@ -642,7 +642,7 @@ with col1:
 
     run = st.checkbox("▶  Activate gesture recognition", key="run_cam")
 
-    FRAME_WINDOW = st.image([])
+    FRAME_WINDOW = st.empty()
 
     if not run:
         st.markdown("""
@@ -755,4 +755,14 @@ if run:
                     confidence = np.max(prediction)
                     predicted_label = label_encoder.inverse_transform([predicted_class])[0]
 
+        # =========================
+        # SHOW FRAME
+        # =========================
 
+        FRAME_WINDOW.image(
+            frame,
+            channels="BGR",
+            use_container_width=True
+        )
+
+    camera.release()
