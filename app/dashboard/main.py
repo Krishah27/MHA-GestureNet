@@ -720,27 +720,44 @@ prediction_history = []
 # =========================================================
 
 if run:
+
     camera = cv2.VideoCapture(0)
+
+    if not camera.isOpened():
+        st.error("⚠ Unable to access webcam")
+        st.stop()
+
     prev_time = 0
 
-    while run:
+    while st.session_state.run_cam:
+
         ret, frame = camera.read()
+
         if not ret:
-            st.error("⚠ Failed to access webcam. Check connection.")
+            st.error("⚠ Failed to read webcam feed")
             break
 
         frame = cv2.flip(frame, 1)
+
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
         results = hands.process(rgb)
 
         predicted_label = "No Gesture"
         confidence = 0.0
 
         if results.multi_hand_landmarks:
+
             for hand_landmarks in results.multi_hand_landmarks:
-                mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+                mp_draw.draw_landmarks(
+                    frame,
+                    hand_landmarks,
+                    mp_hands.HAND_CONNECTIONS
+                )
 
                 landmarks = []
+
                 for lm in hand_landmarks.landmark:
                     landmarks.extend([lm.x, lm.y])
 
@@ -748,16 +765,29 @@ if run:
                     sequence_buffer.append(landmarks)
 
                 if len(sequence_buffer) == SEQUENCE_LENGTH:
-                    input_sequence = np.array(sequence_buffer, dtype=np.float32)
-                    input_sequence = np.expand_dims(input_sequence, axis=0)
-                    prediction = model.predict(input_sequence, verbose=0)
-                    predicted_class = np.argmax(prediction)
-                    confidence = np.max(prediction)
-                    predicted_label = label_encoder.inverse_transform([predicted_class])[0]
 
-        # =========================
-        # SHOW FRAME
-        # =========================
+                    input_sequence = np.array(
+                        sequence_buffer,
+                        dtype=np.float32
+                    )
+
+                    input_sequence = np.expand_dims(
+                        input_sequence,
+                        axis=0
+                    )
+
+                    prediction = model.predict(
+                        input_sequence,
+                        verbose=0
+                    )
+
+                    predicted_class = np.argmax(prediction)
+
+                    confidence = np.max(prediction)
+
+                    predicted_label = label_encoder.inverse_transform(
+                        [predicted_class]
+                    )[0]
 
         FRAME_WINDOW.image(
             frame,
