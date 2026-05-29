@@ -8,3 +8,5 @@ keras==2.15.0
 pandas==2.2.2
 pillow==10.3.0
 scikit-learn==1.4.2
+streamlit-webrtc
+av
