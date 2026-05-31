@@ -1,6 +1,11 @@
 import streamlit as st
-import av
 from streamlit_webrtc import webrtc_streamer
 
 st.title("MHA GestureNet")
-st.success("WebRTC Imports Successful 🚀")
+
+webrtc_streamer(
+    key="test",
+    media_stream_constraints={"video": True, "audio": False}
+)
+
+st.success("WebRTC Widget Loaded")
