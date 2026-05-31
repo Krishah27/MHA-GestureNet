@@ -1,6 +1,6 @@
 import streamlit as st
-import mediapipe as mp
+import av
+from streamlit_webrtc import webrtc_streamer
 
 st.title("MHA GestureNet")
-st.write("MediaPipe Version Loaded")
-st.success("MediaPipe Working 🚀")
+st.success("WebRTC Imports Successful 🚀")
