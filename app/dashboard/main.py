@@ -1,6 +1,9 @@
 import streamlit as st
 import tensorflow as tf
+from tensorflow.keras.models import load_model
 
 st.title("MHA GestureNet")
-st.write("TensorFlow Version:", tf.__version__)
-st.success("TensorFlow Loaded Successfully 🚀")
+
+model = load_model("weights/mha_gesturenet.h5")
+
+st.success("Model Loaded Successfully 🚀")
