@@ -1,9 +1,10 @@
 import streamlit as st
-import tensorflow as tf
 from tensorflow.keras.models import load_model
 
 st.title("MHA GestureNet")
 
-model = load_model("weights/mha_gesturenet.h5")
-
-st.success("Model Loaded Successfully 🚀")
+try:
+    model = load_model("weights/mha_gesturenet.h5")
+    st.success("Model Loaded Successfully 🚀")
+except Exception as e:
+    st.error(f"Model Load Error: {e}")
